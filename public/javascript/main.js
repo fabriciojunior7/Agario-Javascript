@@ -90,6 +90,7 @@ function draw(){
         jogador.raio -= jogador.raio*0.008;
         socket.emit("atualizarPosicao", jogador);
     }
+    //ranking();
 }
 
 function windowResized(){
@@ -174,4 +175,32 @@ function concluirNick(){
     window.scrollTo(0, document.body.scrollHeight);
     document.body.style.overflow = "hidden";
     jogador.nick = document.getElementById("nick").value;
+}
+
+function ranking(){
+    p1 = {texto:"", raio:0};
+    p2 = {texto:"", raio:0};
+    p3 = {texto:"", raio:0};
+    for(var i=0; i<jogadores.length; i++){
+        if(jogadores[i].raio > p1.raio){
+            p3 = p2;
+            p2 = p1;
+            p1.texto = jogadores[i].nick + " - " + jogadores[i].raio.toFixed(1);
+            p1.raio = jogadores[i].raio;
+        }
+        else if(jogadores[i].raio > p2.raio){
+            p3 = p2;
+            p2.texto = jogadores[i].nick + " - " + jogadores[i].raio.toFixed(1);
+            p2.raio = jogadores[i].raio;
+        }
+        else if(jogadores[i].raio > p3.raio){
+            p3.texto = jogadores[i].nick + " - " + jogadores[i].raio.toFixed(1);
+            p3.raio = jogadores[i].raio;
+        }
+    }
+    fill(100);
+    textSize(14);
+    text(p1.texto, 5, 15);
+    text(p2.texto, 5, 30);
+    text(p3.texto, 5, 45);
 }
