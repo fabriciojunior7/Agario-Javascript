@@ -8,6 +8,7 @@ function Jogador(){
     this.wasd = [false, false, false, false];
     this.alvo = [0, 0];
     this.id = "";
+    this.nick = "";
 
     //Metodos
     this.mover = function(){

@@ -14,6 +14,8 @@ var baixoFPS = false;
 
 var segurarMouse = true;
 
+pegarNick();
+
 function setup(){
     //socket = io.connect("localhost:3000");
     socket = io.connect("192.168.0.8:3000");
@@ -76,6 +78,9 @@ function draw(){
     for(var i=0; i<jogadores.length; i++){
         if(jogadores[i].id != jogador.id){
             jogadores[i].desenhar();
+            fill(jogadores[i].cor);
+            textSize(20);
+            text(jogadores[i].nick, jogadores[i].x-jogadores[i].raio/2, jogadores[i].y-jogadores[i].raio/2);
         }
     }
     
@@ -85,23 +90,6 @@ function draw(){
         jogador.raio -= jogador.raio*0.008;
         socket.emit("atualizarPosicao", jogador);
     }
-}
-
-function keyPressed(){
-    //jogador.botaoPressionado(keyCode);
-}
-
-function keyReleased(){
-    //jogador.botaoSolto(keyCode);
-}
-
-function mousePressed(){
-    /*if(segurarMouse){
-        segurarMouse = false;
-    }
-    else{
-        segurarMouse = true;
-    }*/
 }
 
 function windowResized(){
@@ -131,7 +119,7 @@ function seguirDedo(){
 function atualizarJogadores(lista){
     jogadores = [];
     for(var i=0; i<lista.length; i++){
-        jogadores.push(new Adversario(lista[i].x, lista[i].y, lista[i].raio, lista[i].score, lista[i].id));
+        jogadores.push(new Adversario(lista[i].x, lista[i].y, lista[i].raio, lista[i].score, lista[i].id, lista[i].nick));
     }
     if(lista.length == 0){
         jogadores = [];
@@ -149,9 +137,12 @@ function atualizarComidas(lista){
 
 function textos(){
     //Raio
-    fill(200, 200, 0);
+    fill(180, 180, 0);
     textSize(14);
     text(jogador.raio.toFixed(1), jogador.x, jogador.y);
+    fill(jogador.cor);
+    textSize(20);
+    text(jogador.nick, jogador.x-jogador.raio/2, jogador.y-jogador.raio/2);
     //Nome
 }
 
@@ -171,4 +162,16 @@ function grade(){
 
 function baixaTaxa(){
     baixoFPS = true;
+}
+
+function pegarNick(){
+    document.write("<input id='nick' type='text' autofocus><button id='botao' onclick=concluirNick()>Pronto!</button><br>");
+}
+
+function concluirNick(){
+    document.getElementById("nick").style.visibility = "hidden";
+    document.getElementById("botao").style.visibility = "hidden";
+    window.scrollTo(0, document.body.scrollHeight);
+    document.body.style.overflow = "hidden";
+    jogador.nick = document.getElementById("nick").value;
 }

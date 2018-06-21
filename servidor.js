@@ -46,7 +46,7 @@ function novaConexao(socket){
     //RECEBIDOS
     socket.on("novoJogador", novoJogador);
     function novoJogador(jogador){
-        jogadores.push(new Jogador(jogador.x, jogador.y, jogador.raio, jogador.score, socket.id));
+        jogadores.push(new Jogador(jogador.x, jogador.y, jogador.raio, jogador.score, socket.id, jogador.nick));
         console.log("Jogadores Online: " + jogadores.length + "\n");
     }
 
@@ -64,7 +64,7 @@ function novaConexao(socket){
     function atualizarPosicao(jogador){
         for(var i=0; i<jogadores.length; i++){
             if(jogadores[i].id == jogador.id){
-                jogadores[i] = new Jogador(jogador.x, jogador.y, jogador.raio, jogador.score, jogador.id);
+                jogadores[i] = new Jogador(jogador.x, jogador.y, jogador.raio, jogador.score, jogador.id, jogador.nick);
                 break;
             }
         }
@@ -86,13 +86,14 @@ function novaConexao(socket){
 }
 
 //CLASSES
-function Jogador(x, y, raio, score, id){
+function Jogador(x, y, raio, score, id, nick){
     //Atributos
     this.x = x;
     this.y = y;
     this.raio = raio;
     this.score = score;
     this.id = id;
+    this.nick = nick;
 }
 
 function Comida(){
