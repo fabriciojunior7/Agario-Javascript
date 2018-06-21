@@ -12,11 +12,11 @@ console.log("Servidor Rodando...");
 console.log("==========\n\n\n");
 
 //VARIAVEIS
-var largura = 640;
-var altura = 480;
+var largura = 500;
+var altura = largura;
 var jogadores = [];
 var comidas = [];
-var numComidas = 50;
+var numComidas = largura*altura/2000;
 
 for(var i=0; i<numComidas; i++){
     comidas.push(new Comida());
@@ -41,6 +41,7 @@ io.sockets.on("connection", novaConexao);
 function novaConexao(socket){
     
     console.log("Nova Conexao...");
+    socket.emit("tamanhoMapa", dados={l:largura, a:altura});
 
     //RECEBIDOS
     socket.on("novoJogador", novoJogador);

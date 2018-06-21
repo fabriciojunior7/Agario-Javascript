@@ -1,8 +1,20 @@
 function Comida(x, y, raio, id){
     
     //ATRIBUTOS
-    cor = color(0, 255, 0);
-    Entidade.call(this, x, y, raio, cor);
+    rosa = color(255, 0, 102);
+    verde = color(0, 180, 0);
+    laranja = color(255, 102, 0);
+    /*r = round(random(1,2));
+    switch(r){
+        case 1:
+            cor = verde;
+            break;
+        case 2:
+            cor = laranja;
+            break;
+    }*/
+
+    Entidade.call(this, x, y, raio, verde);
     this.id = id;
 
     //METODOS

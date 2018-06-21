@@ -1,7 +1,7 @@
 function Jogador(){
     
     //ATRIBUTOS
-    Entidade.call(this, round(random(5, largura-5)), round(random(5, altura-5)), 5, color(255, 255, 255));
+    Entidade.call(this, round(random(5, largura-5)), round(random(5, altura-5)), 5, color(0, 0, 255));
     this.velocidade = 5;
     this.score = 0;
     this.maxScore = 0;
@@ -66,10 +66,10 @@ function Jogador(){
         }
     }
 
-    this.seguirDedo = function(){
-        distX = abs(this.x - mouseX);
-        distY = abs(this.y - mouseY);
-        hipotenusa = dist(this.x, this.y, mouseX, mouseY);
+    this.seguirDedo = function(mx, my){
+        distX = abs(this.x - mx);
+        distY = abs(this.y - my);
+        hipotenusa = dist(this.x, this.y, mx, my);
         seno = distX/hipotenusa;
         cosseno = distY/hipotenusa;
         //EIXO X
@@ -81,8 +81,8 @@ function Jogador(){
         else if(this.alvo[1] > this.y && this.y < altura-this.raio/2){this.y += this.velocidade*cosseno;}
 
         if(hipotenusa <= this.velocidade){
-            this.x = mouseX;
-            this.y = mouseY;
+            this.x = mx;
+            this.y = my;
         }
 
         this.corrigirPosicao();
@@ -102,6 +102,11 @@ function Jogador(){
         this.raio += comida.raio/4;
         this.velocidade = 5 - (this.raio/50);
         if(this.velocidade < 0.25){this.velocidade = 0.25;}
+    }
+
+    this.reset = function(){
+        this.x = round(random(5, largura-5));
+        this.y = round(random(5, altura-5));
     }
 
 }
