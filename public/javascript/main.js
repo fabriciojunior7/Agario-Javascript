@@ -90,7 +90,7 @@ function draw(){
         jogador.raio -= jogador.raio*0.008;
         socket.emit("atualizarPosicao", jogador);
     }
-    //ranking();
+    ranking();
 }
 
 function windowResized(){
@@ -178,9 +178,64 @@ function concluirNick(){
 }
 
 function ranking(){
-    p1 = {texto:"", raio:0};
-    p2 = {texto:"", raio:0};
-    p3 = {texto:"", raio:0};
+    //p1 = {texto:"", raio:0};
+    //p2 = {texto:"", raio:0};
+   // p3 = {texto:"", raio:0};
+
+    podio = [];
+
+    for(var i=0; i<jogadores.length; i++){
+        if(i < 3){
+            if(podio.length == 0){podio.push(jogadores[i]);}
+            else if(podio.length == 1){
+                if(jogadores[i].raio > podio[0].raio){
+                    podio.splice(0, 0, jogadores[i]);
+                }
+                else{
+                    podio.push(jogadores[i]);
+                }
+            }
+            else if(podio.length == 2){
+                if(jogadores[i].raio > podio[0].raio){
+                    podio.splice(0, 0, jogadores[i]);
+                }
+                else if(jogadores[i].raio > podio[1].raio){
+                    podio.splice(1, 0, jogadores[i]);
+                }
+                else{
+                    podio.push(jogadores[i]);
+                }
+            }
+            else if(podio.length == 3){
+                if(jogadores[i].raio > podio[0].raio){
+                    podio.splice(0, 0, jogadores[i]);
+                }
+                else if(jogadores[i].raio > podio[1].raio){
+                    podio.splice(1, 0, jogadores[i]);
+                }
+                else if(jogadores[i].raio > podio[2].raio){
+                    podio.splice(2, 0, jogadores[i]);
+                }
+                else{
+                    podio.push(jogadores[i]);
+                }
+            }
+        }
+        else{
+            if(jogadores[i].raio > podio[0].raio){
+                podio.splice(0, 0, jogadores[i]);
+            }
+            else if(jogadores[i].raio > podio[1].raio){
+                podio.splice(1, 0, jogadores[i]);
+            }
+            else if(jogadores[i].raio > podio[2].raio){
+                podio.splice(2, 0, jogadores[i]);
+            }
+        }
+        if(podio.length > 3){podio.pop();}
+    }
+
+    /*
     for(var i=0; i<jogadores.length; i++){
         if(jogadores[i].raio > p1.raio){
             p3 = p2;
@@ -198,9 +253,10 @@ function ranking(){
             p3.raio = jogadores[i].raio;
         }
     }
+    */
     fill(100);
     textSize(14);
-    text(p1.texto, 5, 15);
-    text(p2.texto, 5, 30);
-    text(p3.texto, 5, 45);
+    if(podio.length > 0){text(podio[0].nick+" ("+podio[0].raio.toFixed(1)+")", 5, 15);}
+    if(podio.length > 1){text(podio[1].nick+" ("+podio[1].raio.toFixed(1)+")", 5, 30);}
+    if(podio.length > 2){text(podio[2].nick+" ("+podio[2].raio.toFixed(1)+")", 5, 45);}
 }
