@@ -166,7 +166,7 @@ function baixaTaxa(){
 }
 
 function pegarNick(){
-    document.write("<input id='nick' type='text' autofocus><button id='botao' onclick=concluirNick()>Pronto!</button><br>");
+    document.write("<input id='nick' type='text' maxlength='16' autofocus><button id='botao' onclick=concluirNick()>Pronto!</button><br>");
 }
 
 function concluirNick(){
@@ -178,10 +178,6 @@ function concluirNick(){
 }
 
 function ranking(){
-    //p1 = {texto:"", raio:0};
-    //p2 = {texto:"", raio:0};
-   // p3 = {texto:"", raio:0};
-
     podio = [];
 
     for(var i=0; i<jogadores.length; i++){
@@ -235,26 +231,9 @@ function ranking(){
         if(podio.length > 3){podio.pop();}
     }
 
-    /*
-    for(var i=0; i<jogadores.length; i++){
-        if(jogadores[i].raio > p1.raio){
-            p3 = p2;
-            p2 = p1;
-            p1.texto = jogadores[i].nick + " - " + jogadores[i].raio.toFixed(1);
-            p1.raio = jogadores[i].raio;
-        }
-        else if(jogadores[i].raio > p2.raio){
-            p3 = p2;
-            p2.texto = jogadores[i].nick + " - " + jogadores[i].raio.toFixed(1);
-            p2.raio = jogadores[i].raio;
-        }
-        else if(jogadores[i].raio > p3.raio){
-            p3.texto = jogadores[i].nick + " - " + jogadores[i].raio.toFixed(1);
-            p3.raio = jogadores[i].raio;
-        }
-    }
-    */
-    fill(100);
+    //fill(200, 200, 200, 150);
+    //rect(0, 0, 200, 100);
+    fill(50);
     textSize(14);
     if(podio.length > 0){text(podio[0].nick+" ("+podio[0].raio.toFixed(1)+")", 5, 15);}
     if(podio.length > 1){text(podio[1].nick+" ("+podio[1].raio.toFixed(1)+")", 5, 30);}
