@@ -105,7 +105,7 @@ function windowResized(){
 }
 
 function seguirDedo(){
-    if(!baixoFPS){
+    if(!baixoFPS && jogador.nick != ""){
         jogador.alvo = [mouseX/escala, mouseY/escala];
         jogador.seguirDedo(mouseX/escala, mouseY/escala);
         socket.emit("atualizarPosicao", jogador);
@@ -113,7 +113,12 @@ function seguirDedo(){
     else{
         textSize(40);
         fill(255, 0, 0);
-        text("FPS BAIXO!", largura/2, altura/2);
+        if(baixoFPS){
+            text("FPS BAIXO!", largura/2-100, altura/2);
+        }
+        else if(jogador.nick == ""){
+            text("Digite um Nome!", largura/2-130, altura/2);
+        }
     }
 }
 
@@ -166,7 +171,8 @@ function baixaTaxa(){
 }
 
 function pegarNick(){
-    document.write("<input id='nick' type='text' maxlength='16' autofocus><button id='botao' onclick=concluirNick()>Pronto!</button><br>");
+    document.write("<input id='nick' type='text' style='text-align:center; font-size: 20px; border-radius: 20px; margin: 10px; border: 3px solid red;' maxlength='16' placeholder='Nome' autofocus>"+
+    "<br><button id='botao' style='font-size: 20px; border-radius: 20px; background-color: white;' onclick=concluirNick()>Jogar!</button><br><br>");
 }
 
 function concluirNick(){
@@ -175,6 +181,7 @@ function concluirNick(){
     window.scrollTo(0, document.body.scrollHeight);
     document.body.style.overflow = "hidden";
     jogador.nick = document.getElementById("nick").value;
+    jogador.reset();
 }
 
 function ranking(){
