@@ -19,6 +19,10 @@ pegarNick();
 function setup(){
     //socket = io.connect("localhost:3000");
     socket = io.connect("192.168.0.8:3000");
+    //socket = io.connect("http://fabriciojunior7.surge.sh:3000");
+    //socket = io.connect("187.183.196.88:80");
+    //socket = io.connect("192.168.0.8:3000");
+    //socket = io.connect("45.55.110.124:3000");
 
     socket.on("tamanhoMapa", function(dados){
         if(windowWidth < windowHeight){
