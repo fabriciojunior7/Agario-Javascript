@@ -103,8 +103,3 @@ function Comida(){
     this.y = Math.floor((Math.random() * (altura-this.raio/2)) + this.raio/2);
     this.id = "C" + this.x + "" + this.y + "" + this.raio;
 }
-
-var port = process.env.PORT || 3000;
-app.listen(port, function () {
-    console.log('Umbler listening on port %s', port);
-});
