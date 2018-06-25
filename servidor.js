@@ -29,7 +29,7 @@ function atualizarServidor(){
     io.sockets.emit("atualizarComidas", comidas);
 }
 
-setInterval(novasComidas, 1000);
+setInterval(novasComidas, 250);
 function novasComidas(){
     if(comidas.length < numComidas){
         comidas.push(new Comida());
