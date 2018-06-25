@@ -11,8 +11,9 @@ var jogadores = [];
 var comidas = [];
 
 var baixoFPS = false;
-
+var estouVivo = false;
 var segurarMouse = true;
+//var emJogo = false;
 
 pegarNick();
 
@@ -65,32 +66,50 @@ function draw(){
     if(frameRate() < 22 && frameCount > 30){baixaTaxa();}
     else{baixoFPS = false;}
     scale(escala, escala);
+    textAlign(CENTER);
     if(jogador.id == "" || jogador.id == undefined){jogador.id = socket.id;}
     background(255);
     grade();
-    if(mouseIsPressed || segurarMouse){seguirDedo();}
-    else{jogador.mover();}
+    if(estouVivo){
+        if(mouseIsPressed || segurarMouse){seguirDedo();}
+        else{jogador.mover();}
+    }
 
     for(var i=0; i<comidas.length; i++){
         hit = collideCircleCircle(jogador.x, jogador.y, jogador.raio, comidas[i].x, comidas[i].y, comidas[i].raio);
-        if(hit && jogador.raio > comidas[i].raio && !baixoFPS){
+        if(estouVivo && hit && jogador.raio > comidas[i].raio && !baixoFPS){
             comidas[i].comer();
             comidas.splice(i, 1);
         }
         else{comidas[i].desenhar();}
     }
+
+    estouVivo = false;
     for(var i=0; i<jogadores.length; i++){
+        //Desenhar
         if(jogadores[i].id != jogador.id){
             jogadores[i].desenhar();
-            fill(jogadores[i].cor);
+            fill(255);
             textSize(20);
-            text(jogadores[i].nick, jogadores[i].x-jogadores[i].raio/2, jogadores[i].y-jogadores[i].raio/2);
+            strokeWeight(2);
+            stroke(0);
+            text(jogadores[i].nick, jogadores[i].x, jogadores[i].y+7);
+
+            //Engolir
+            hit = collidePointCircle(jogadores[i].x, jogadores[i].y ,jogador.x, jogador.y, jogador.raio);
+            if(hit && jogadores[i].raio <= jogador.raio*0.8 && jogador.raio > jogadores[i].raio){
+                jogador.engolir(jogadores[i]);
+            }
         }
+        else{estouVivo = true;}
     }
+    if(!estouVivo && frameCount > 60 && jogador.emJogo){perdeu();}
     
-    jogador.desenhar();
-    textos();
-    if(frameCount % 60 == 0 && jogador.raio > 6){
+    if(estouVivo){
+        jogador.desenhar();
+        textos();
+    }
+    if(estouVivo && frameCount % 60 == 0 && jogador.raio > 6){
         jogador.raio -= jogador.raio*0.008;
         socket.emit("atualizarPosicao", jogador);
     }
@@ -106,10 +125,11 @@ function windowResized(){
         tela = createCanvas(windowHeight, windowHeight);
         escala = windowHeight/altura;
     }
+    window.scrollTo(0, document.body.scrollHeight);
 }
 
 function seguirDedo(){
-    if(!baixoFPS && jogador.nick != ""){
+    if(!baixoFPS && jogador.emJogo){
         jogador.alvo = [mouseX/escala, mouseY/escala];
         jogador.seguirDedo(mouseX/escala, mouseY/escala);
         socket.emit("atualizarPosicao", jogador);
@@ -118,10 +138,17 @@ function seguirDedo(){
         textSize(40);
         fill(255, 0, 0);
         if(baixoFPS){
-            text("FPS BAIXO!", largura/2-100, altura/2);
+            text("FPS BAIXO!", largura/2, altura/2+13);
         }
-        else if(jogador.nick == ""){
-            text("Digite um Nome!", largura/2-130, altura/2);
+        else if(!jogador.emJogo){
+            text("Digite um Nome!", largura/2, altura/2+13);
+        }
+    }
+
+    if(!jogador.emJogo && mouseIsPressed && mouseY > 0 && mouseY < altura*escala){
+        if(mouseX > 0 && mouseX < largura*escala){
+            jogador.x = mouseX/escala;
+            jogador.y = mouseY/escala;
         }
     }
 }
@@ -129,7 +156,9 @@ function seguirDedo(){
 function atualizarJogadores(lista){
     jogadores = [];
     for(var i=0; i<lista.length; i++){
-        jogadores.push(new Adversario(lista[i].x, lista[i].y, lista[i].raio, lista[i].score, lista[i].id, lista[i].nick));
+        if(lista[i].emJogo || socket.id == lista[i].id){
+            jogadores.push(new Adversario(lista[i].x, lista[i].y, lista[i].raio, lista[i].score, lista[i].id, lista[i].nick, lista[i].emJogo));
+        }
     }
     if(lista.length == 0){
         jogadores = [];
@@ -149,11 +178,13 @@ function textos(){
     //Raio
     fill(180, 180, 0);
     textSize(14);
-    text(jogador.raio.toFixed(1), jogador.x, jogador.y);
-    fill(jogador.cor);
-    textSize(20);
-    text(jogador.nick, jogador.x-jogador.raio/2, jogador.y-jogador.raio/2);
+    text(jogador.raio.toFixed(1), jogador.x, jogador.y+15);
     //Nome
+    fill(255, 255, 0);
+    strokeWeight(2);
+    stroke(0);
+    textSize(20);
+    text(jogador.nick, jogador.x, jogador.y);
 }
 
 function grade(){
@@ -185,7 +216,7 @@ function concluirNick(){
     window.scrollTo(0, document.body.scrollHeight);
     document.body.style.overflow = "hidden";
     jogador.nick = document.getElementById("nick").value;
-    jogador.reset();
+    jogador.iniciar();
 }
 
 function ranking(){
@@ -244,9 +275,44 @@ function ranking(){
 
     //fill(200, 200, 200, 150);
     //rect(0, 0, 200, 100);
+    textAlign(LEFT);
+    noStroke();
     fill(50);
     textSize(14);
     if(podio.length > 0){text(podio[0].nick+" ("+podio[0].raio.toFixed(1)+")", 5, 15);}
     if(podio.length > 1){text(podio[1].nick+" ("+podio[1].raio.toFixed(1)+")", 5, 30);}
     if(podio.length > 2){text(podio[2].nick+" ("+podio[2].raio.toFixed(1)+")", 5, 45);}
+    textAlign(CENTER);
+}
+
+function perdeu(){
+    menu();
+}
+
+function menu(){
+    //FUNDO
+    fill(255, 175, 175, 200);
+    strokeWeight(2);
+    stroke(0);
+    rect(largura/2-150, altura/2-100, 300, 200, 20);
+    //TEXTOS
+    fill(255, 0, 0);
+    textSize(38);
+    text("Você Perdeu!", largura/2, altura/2-50);
+    textSize(30);
+    fill(255, 255, 0);
+    text("Ponto: "+jogador.score.toFixed(2), largura/2, altura/2-10);
+    text("Raio Final: "+jogador.raio.toFixed(1), largura/2, altura/2+25);
+    //BOTAO
+    fill(0, 255, 0);
+    rect(largura/2-45, altura/2+45, 90, 40, 20);
+    fill(255);
+    textSize(28);
+    text("Jogar!", largura/2, altura/2+73);
+
+    //Pressionar Botao
+    hit = collidePointRect(mouseX, mouseY, escala*largura/2-45, escala*altura/2+45, escala*90, escala*40);
+    if(mouseIsPressed && hit){
+        location.reload();
+    }
 }

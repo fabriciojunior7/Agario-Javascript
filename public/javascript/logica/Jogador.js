@@ -9,6 +9,7 @@ function Jogador(){
     this.alvo = [0, 0];
     this.id = "";
     this.nick = "";
+    this.emJogo = false;
 
     //Metodos
     this.mover = function(){
@@ -105,9 +106,24 @@ function Jogador(){
         if(this.velocidade < 0.25){this.velocidade = 0.25;}
     }
 
+    this.engolir = function(adverdasio){
+        this.raio += adverdasio.raio;
+        this.score += adverdasio.raio;
+        jogadores.splice(adverdasio.id, 1);
+        socket.emit("engolir", adverdasio.id);
+    }
+
+    this.serEngolido = function(){
+
+    }
+
     this.reset = function(){
         this.x = round(random(5, largura-5));
         this.y = round(random(5, altura-5));
+    }
+
+    this.iniciar = function(){
+        this.emJogo = true;
     }
 
 }

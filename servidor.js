@@ -46,7 +46,7 @@ function novaConexao(socket){
     //RECEBIDOS
     socket.on("novoJogador", novoJogador);
     function novoJogador(jogador){
-        jogadores.push(new Jogador(jogador.x, jogador.y, jogador.raio, jogador.score, socket.id, jogador.nick));
+        jogadores.push(new Jogador(jogador.x, jogador.y, jogador.raio, jogador.score, socket.id, jogador.nick, jogador.emJogo));
         console.log("Jogadores Online: " + jogadores.length + "\n");
     }
 
@@ -60,11 +60,22 @@ function novaConexao(socket){
         }
     }
 
+    socket.on("engolir", engolir);
+    function engolir(id){
+        for(var i=0; i<jogadores.length; i++){
+            if(id == jogadores[i].id){
+                //socket.emit("perdeu", id);
+                jogadores.splice(i, 1);
+                break;
+            }
+        }
+    }
+
     socket.on("atualizarPosicao", atualizarPosicao);
     function atualizarPosicao(jogador){
         for(var i=0; i<jogadores.length; i++){
             if(jogadores[i].id == jogador.id){
-                jogadores[i] = new Jogador(jogador.x, jogador.y, jogador.raio, jogador.score, jogador.id, jogador.nick);
+                jogadores[i] = new Jogador(jogador.x, jogador.y, jogador.raio, jogador.score, jogador.id, jogador.nick, jogador.emJogo);
                 break;
             }
         }
@@ -86,7 +97,7 @@ function novaConexao(socket){
 }
 
 //CLASSES
-function Jogador(x, y, raio, score, id, nick){
+function Jogador(x, y, raio, score, id, nick, emJogo){
     //Atributos
     this.x = x;
     this.y = y;
@@ -94,6 +105,7 @@ function Jogador(x, y, raio, score, id, nick){
     this.score = score;
     this.id = id;
     this.nick = nick;
+    this.emJogo = emJogo;
 }
 
 function Comida(){

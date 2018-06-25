@@ -1,4 +1,4 @@
-function Adversario(x, y, raio, score, id, nick){
+function Adversario(x, y, raio, score, id, nick, emJogo){
     
     //ATRIBUTOS
     cor = color(255, 0, 0);
@@ -6,5 +6,5 @@ function Adversario(x, y, raio, score, id, nick){
     this.score = score;
     this.id = id;
     this.nick = nick;
-
+    this.emJogo = emJogo;
 }
