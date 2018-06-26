@@ -101,9 +101,11 @@ function Jogador(){
 
     this.comer = function(comida){
         this.score += comida.raio/4;
-        this.raio += comida.raio/4;
-        this.velocidade = 5 - (this.raio/50);
-        if(this.velocidade < 0.25){this.velocidade = 0.25;}
+        if(this.raio < largura*0.6){
+            this.raio += comida.raio/4;
+            this.velocidade = 5 - (this.raio/50);
+            if(this.velocidade < 0.25){this.velocidade = 0.25;}
+        }
     }
 
     this.engolir = function(adverdasio){

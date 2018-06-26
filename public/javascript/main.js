@@ -278,10 +278,11 @@ function ranking(){
     textAlign(LEFT);
     noStroke();
     fill(50);
+    textSize(16);
+    if(podio.length > 0){text("1° - "+podio[0].nick+" ("+podio[0].raio.toFixed(1)+")", 5, 15);}
     textSize(14);
-    if(podio.length > 0){text(podio[0].nick+" ("+podio[0].raio.toFixed(1)+")", 5, 15);}
-    if(podio.length > 1){text(podio[1].nick+" ("+podio[1].raio.toFixed(1)+")", 5, 30);}
-    if(podio.length > 2){text(podio[2].nick+" ("+podio[2].raio.toFixed(1)+")", 5, 45);}
+    if(podio.length > 1){text("2° - "+podio[1].nick+" ("+podio[1].raio.toFixed(1)+")", 5, 30);}
+    if(podio.length > 2){text("3° - "+podio[2].nick+" ("+podio[2].raio.toFixed(1)+")", 5, 45);}
     textAlign(CENTER);
 }
 
