@@ -49,7 +49,7 @@ function atualizarBuracos(){
         buracos.push(new Buraco());
     }
     for(var i=0; i<buracos.length; i++){
-        buracos[i].vibrar();
+        buracos[i].mover();
     }
 }
 
@@ -140,14 +140,24 @@ function Buraco(){
     this.x = Math.floor((Math.random() * (largura-this.raio/2)) + this.raio/2);
     this.y = Math.floor((Math.random() * (altura-this.raio/2)) + this.raio/2);
     this.tempoDeVida = Math.floor((Math.random() * 1001) + 100);
+    this.velocidadeX = Math.random() * 2 * Math.floor((Math.random() * 3) - 1);
+    this.velocidadeY = Math.random() * 2 * Math.floor((Math.random() * 3) - 1);
+    if(this.velocidadeX == 0){this.velocidadeX = 1;}
+    if(this.velocidadeY == 0){this.velocidadeY = 1;}
 
     //Metodos
     this.vibrar = function(){
         this.x += Math.floor((Math.random() * 5) - 2);
         this.y += Math.floor((Math.random() * 5) - 2);
-        if(this.x < this.raio){this.x = this.raio/2;}
-        else if(this.x > largura-this.raio){this.x = largura-this.raio/2;}
-        if(this.y < this.raio){this.y = this.raio/2;}
-        else if(this.y > altura-this.raio){this.y = altura-this.raio/2;}
+    }
+
+    this.mover = function(){
+        this.x += this.velocidadeX;
+        this.y += this.velocidadeY;
+        this.vibrar();
+        if(this.x < this.raio/2){this.x = this.raio/2; this.velocidadeX*=(-1);}
+        else if(this.x > largura-this.raio/2){this.x = largura-this.raio/2; this.velocidadeX*=(-1);}
+        if(this.y < this.raio/2){this.y = this.raio/2; this.velocidadeY*=(-1);}
+        else if(this.y > altura-this.raio/2){this.y = altura-this.raio/2; this.velocidadeY*=(-1);}
     }
 }
