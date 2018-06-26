@@ -224,6 +224,13 @@ function textos(){
     stroke(0);
     textSize(20);
     text(jogador.nick, jogador.x, jogador.y);
+    //Tiros Restantes
+    fill(255, 0, 0);
+    strokeWeight(2);
+    stroke(0);
+    textSize(20);
+    tirosRestantes = floor((jogador.raio-30)/25) + 1;
+    if(tirosRestantes > 0 || jogador.raio >= 30){text(".".repeat(tirosRestantes), jogador.x, jogador.y+20);}
 }
 
 function grade(){

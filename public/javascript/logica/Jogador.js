@@ -132,6 +132,7 @@ function Jogador(){
     this.atirar = function(){
         if(this.raio >= 30){
             this.raio -= 25;
+            this.velocidade = 5 - (this.raio/50);
             socket.emit("atirar", this);
         }
     }
