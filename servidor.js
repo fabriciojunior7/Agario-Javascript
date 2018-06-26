@@ -123,7 +123,7 @@ function novaConexao(socket){
         for(var i=0; i<balas.length; i++){
             if(balas[i].id == id){
                 balas.splice(i, 1);
-                console.log(i);
+                //console.log(i);
                 //break;
             }
         }
