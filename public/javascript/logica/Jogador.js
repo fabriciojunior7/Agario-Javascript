@@ -28,7 +28,6 @@ function Jogador(){
         else if(this.wasd[3] && this.x < largura-this.raio/2){
             this.x += this.velocidade;
         }
-
         this.corrigirPosicao();
     }
 
@@ -86,7 +85,6 @@ function Jogador(){
             this.x = mx;
             this.y = my;
         }
-
         this.corrigirPosicao();
     }
 
@@ -129,6 +127,25 @@ function Jogador(){
 
     this.iniciar = function(){
         this.emJogo = true;
+    }
+
+    this.atirar = function(){
+        if(this.raio >= 30){
+            this.raio -= 25;
+            socket.emit("atirar", this);
+        }
+    }
+
+    this.atingirBala = function(bala){
+        this.raio -= 30;
+    }
+
+    this.checarVivo = function(){
+        if(jogador.raio <= 0){
+            estouVivo = false;
+            jogador.raio = 0;
+            socket.emit("engolir", jogador.id);
+        }
     }
 
 }

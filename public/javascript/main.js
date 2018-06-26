@@ -9,11 +9,12 @@ var escala;
 var jogador;
 var jogadores = [];
 var comidas = [];
+var buracos = [];
+var balas = [];
 
 var baixoFPS = false;
 var estouVivo = false;
 var segurarMouse = true;
-var buracos = [];
 
 pegarNick();
 
@@ -49,6 +50,7 @@ function setup(){
     socket.on("atualizarJogadores", atualizarJogadores);
     socket.on("atualizarComidas", atualizarComidas);
     socket.on("atualizarBuracos", atualizarBuracos);
+    socket.on("atualizarBalas", atualizarBalas);
     socket.on("tamanhoMapa", function(dados){
         if(windowWidth < windowHeight){
             tela = createCanvas(windowWidth, windowWidth);
@@ -85,6 +87,18 @@ function draw(){
         else{comidas[i].desenhar();}
     }
 
+    //BALAS
+    for(var i=0; i < balas.length; i++){
+        balas[i].desenhar();
+        hit = collideCircleCircle(jogador.x, jogador.y, jogador.raio, balas[i].x, balas[i].y, balas[i].raio);
+        if(hit && balas[i].id != jogador.id){
+            jogador.atingirBala(balas[i]);
+            socket.emit("balaColidida", balas[i].id);
+            balas.splice(i, 1);
+        }
+    }
+
+    //ADVERSARIOS
     estouVivo = false;
     for(var i=0; i<jogadores.length; i++){
         //Desenhar
@@ -107,6 +121,7 @@ function draw(){
     
     if(estouVivo){
         jogador.desenhar();
+        jogador.checarVivo();
         textos();
     }
     if(estouVivo && frameCount % 60 == 0 && jogador.raio > 6){
@@ -118,11 +133,6 @@ function draw(){
         hit = collideCircleCircle(jogador.x, jogador.y, jogador.raio, buracos[i].x, buracos[i].y, buracos[i].raio);
         if(hit && estouVivo){
             jogador.buraco();
-            if(jogador.raio <= 0){
-                estouVivo = false;
-                jogador.raio = 0;
-                socket.emit("engolir", jogador.id);
-            }
         }
         buracos[i].desenhar();
     }
@@ -196,6 +206,13 @@ function atualizarBuracos(lista){
     }
 }
 
+function atualizarBalas(lista){
+    balas = [];
+    for(var i=0; i<lista.length; i++){
+        balas.push(new Bala(lista[i].x, lista[i].y, lista[i].velocidadeX, lista[i].velocidadeY, lista[i].id));
+    }
+}
+
 function textos(){
     //Raio
     fill(180, 180, 0);
@@ -229,6 +246,10 @@ function baixaTaxa(){
 
 function keyPressed(){
     if(keyCode == 13){concluirNick();}
+}
+
+function doubleClicked(){
+    jogador.atirar();
 }
 
 function pegarNick(){

@@ -17,6 +17,7 @@ var altura = largura;
 var jogadores = [];
 var comidas = [];
 var buracos = [];
+var balas = [];
 var numComidas = Math.floor(largura*altura/2000);
 var numBuracos = Math.floor(largura*0.006);
 
@@ -34,6 +35,15 @@ function atualizarServidor(){
     io.sockets.emit("atualizarJogadores", jogadores);
     io.sockets.emit("atualizarComidas", comidas);
     io.sockets.emit("atualizarBuracos", buracos);
+    io.sockets.emit("atualizarBalas", balas);
+}
+
+setInterval(moverBalas, 25);
+function moverBalas(){
+    for(var i=0; i<balas.length; i++){
+        balas[i].mover();
+        if(balas[i].x < 0 || balas[i].x > largura || balas[i].y < 0 || balas[i].y > altura){balas.splice(i, 1);}
+    }
 }
 
 setInterval(novasComidas, 250);
@@ -94,6 +104,27 @@ function novaConexao(socket){
             if(jogadores[i].id == jogador.id){
                 jogadores[i] = new Jogador(jogador.x, jogador.y, jogador.raio, jogador.score, jogador.id, jogador.nick, jogador.emJogo);
                 break;
+            }
+        }
+    }
+
+    socket.on("atirar", atirar);
+    function atirar(jogador){
+        x = Math.floor(jogador.x);
+        y = Math.floor(jogador.y);
+        id = jogador.id;
+        for(var i=0; i<8; i++){
+            balas.push(new Bala(x, y, i, id));
+        }
+    }
+
+    socket.on("balaColidida", balaColidida);
+    function balaColidida(id){
+        for(var i=0; i<balas.length; i++){
+            if(balas[i].id == id){
+                balas.splice(i, 1);
+                console.log(i);
+                //break;
             }
         }
     }
@@ -159,5 +190,24 @@ function Buraco(){
         else if(this.x > largura-this.raio/2){this.x = largura-this.raio/2; this.velocidadeX*=(-1);}
         if(this.y < this.raio/2){this.y = this.raio/2; this.velocidadeY*=(-1);}
         else if(this.y > altura-this.raio/2){this.y = altura-this.raio/2; this.velocidadeY*=(-1);}
+    }
+}
+
+function Bala(x, y, num, id){
+    //Atributos
+    this.x = x;
+    this.y = y;
+    this.num = num;
+    this.id = id;
+    this.velocidade = 5;
+    this.velocidadeX = Math.sin((Math.PI/4)*num)*this.velocidade;
+    this.velocidadeY = Math.cos((Math.PI/4)*num)*this.velocidade;
+    //this.velocidadeX = 2;
+    //this.velocidadeY = 2;
+    
+    //Metodos
+    this.mover = function(){
+        this.x += this.velocidadeX;
+        this.y += this.velocidadeY;
     }
 }
