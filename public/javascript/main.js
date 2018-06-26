@@ -16,6 +16,8 @@ var baixoFPS = false;
 var estouVivo = false;
 var segurarMouse = true;
 
+var relogio = 0;
+
 pegarNick();
 
 function setup(){
@@ -47,6 +49,7 @@ function setup(){
     socket.emit("novoJogador", jogador);
 
     //Recebidos
+    socket.on("cronometro", cronometro);
     socket.on("atualizarJogadores", atualizarJogadores);
     socket.on("atualizarComidas", atualizarComidas);
     socket.on("atualizarBuracos", atualizarBuracos);
@@ -231,6 +234,10 @@ function textos(){
     textSize(20);
     tirosRestantes = floor((jogador.raio-30)/25) + 1;
     if(tirosRestantes > 0 || jogador.raio >= 30){text(".".repeat(tirosRestantes), jogador.x, jogador.y+20);}
+    //Cronometro
+    textAlign(RIGHT);
+    textSize(14);
+    text(relogio+" s", largura-2, 13);
 }
 
 function grade(){
@@ -369,6 +376,36 @@ function menu(){
     //Pressionar Botao
     hit = collidePointRect(mouseX, mouseY, escala*largura/2-45, escala*altura/2+45, escala*90, escala*40);
     if(mouseIsPressed && hit){
+        location.reload();
+    }
+}
+
+function cronometro(dados){
+    relogio = dados.tempo;
+    if(relogio <= 0){
+        //FUNDO
+        fill(255, 175, 175);
+        strokeWeight(2);
+        stroke(0);
+        rect(largura/2-150, altura/2-100, 300, 200, 20);
+        //TEXTO
+        fill(255, 0, 0);
+        textAlign(CENTER);
+        textSize(40);
+        text("Resultado Final", largura/2, altura/2-60);
+        fill(50);
+        textSize(25);
+        fill(255, 255, 0);
+        if(podio.length > 0){text("1° - "+podio[0].nick+" ("+podio[0].raio.toFixed(1)+")", largura/2, altura/2);}
+        textSize(20);
+        fill(180);
+        if(podio.length > 1){text("2° - "+podio[1].nick+" ("+podio[1].raio.toFixed(1)+")", largura/2, altura/2+35);}
+        textSize(15);
+        fill(245, 92, 0);
+        if(podio.length > 2){text("3° - "+podio[2].nick+" ("+podio[2].raio.toFixed(1)+")", largura/2, altura/2+70);}
+        noLoop();
+    }
+    if(dados.contagemRegressiva <= 0){
         location.reload();
     }
 }

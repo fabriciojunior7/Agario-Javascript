@@ -7,9 +7,9 @@ var socket = require("socket.io");
 var io = socket(servidor);
 
 //Rodando
-console.log("\n\n\n==========");
+console.log("\n\n\n====================");
 console.log("Servidor Rodando...");
-console.log("==========\n\n\n");
+console.log("====================\n\n\n");
 
 //VARIAVEIS
 var largura = 500;
@@ -20,11 +20,15 @@ var buracos = [];
 var balas = [];
 var numComidas = Math.floor(largura*altura/2000);
 var numBuracos = Math.floor(largura*0.006);
+var tempoInicial = 300;
+var tempo = tempoInicial;
+var contagemRegressiva = 10;
+var partidarTotais = 0;
 
 for(var i=0; i<numComidas; i++){
     comidas.push(new Comida());
 }
-
+    
 for(var i=0; i<numBuracos; i++){
     buracos.push(new Buraco());
 }
@@ -36,6 +40,26 @@ function atualizarServidor(){
     io.sockets.emit("atualizarComidas", comidas);
     io.sockets.emit("atualizarBuracos", buracos);
     io.sockets.emit("atualizarBalas", balas);
+}
+
+setInterval(cronometro, 1000);
+function cronometro(){
+    if(tempo > 0){
+        tempo--;
+    }
+    else{
+        console.log("Contagem Regressiva: "+contagemRegressiva+" s");
+        contagemRegressiva--;
+        if(contagemRegressiva < 0){
+            tempo = tempoInicial;
+            contagemRegressiva = 10;
+            jogadores = [];
+            partidarTotais++;
+            console.log("\nTotal de Partidas: "+partidarTotais+"\n");
+        }
+    }
+    dados = {tempo:tempo, contagemRegressiva:contagemRegressiva};
+    io.sockets.emit("cronometro", dados);
 }
 
 setInterval(moverBalas, 25);
@@ -208,5 +232,19 @@ function Bala(x, y, num, id){
     this.mover = function(){
         this.x += this.velocidadeX;
         this.y += this.velocidadeY;
+    }
+}
+
+//Outros
+function resetPartida(){
+    jogador = [];
+    balas = [];
+    comidas = [];
+    for(var i=0; i<numComidas; i++){
+        comidas.push(new Comida());
+    }
+    
+    for(var i=0; i<numBuracos; i++){
+        buracos.push(new Buraco());
     }
 }
