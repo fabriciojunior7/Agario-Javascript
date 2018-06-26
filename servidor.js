@@ -16,10 +16,16 @@ var largura = 500;
 var altura = largura;
 var jogadores = [];
 var comidas = [];
-var numComidas = largura*altura/2000;
+var buracos = [];
+var numComidas = Math.floor(largura*altura/2000);
+var numBuracos = Math.floor(largura*0.006);
 
 for(var i=0; i<numComidas; i++){
     comidas.push(new Comida());
+}
+
+for(var i=0; i<numBuracos; i++){
+    buracos.push(new Buraco());
 }
 
 //ATUALIZAR SERVIDOR
@@ -27,12 +33,23 @@ setInterval(atualizarServidor, 25);
 function atualizarServidor(){
     io.sockets.emit("atualizarJogadores", jogadores);
     io.sockets.emit("atualizarComidas", comidas);
+    io.sockets.emit("atualizarBuracos", buracos);
 }
 
 setInterval(novasComidas, 250);
 function novasComidas(){
     if(comidas.length < numComidas){
         comidas.push(new Comida());
+    }
+}
+
+setInterval(atualizarBuracos, 250);
+function atualizarBuracos(){
+    if(buracos.length < numBuracos){
+        buracos.push(new Buraco());
+    }
+    for(var i=0; i<buracos.length; i++){
+        buracos[i].vibrar();
     }
 }
 
@@ -114,4 +131,23 @@ function Comida(){
     this.x = Math.floor((Math.random() * (largura-this.raio/2)) + this.raio/2);
     this.y = Math.floor((Math.random() * (altura-this.raio/2)) + this.raio/2);
     this.id = "C" + this.x + "" + this.y + "" + this.raio;
+}
+
+function Buraco(){
+    //Atributos
+    var r = Math.floor((Math.random() * 5) + 4)/100;
+    this.raio = largura*r;
+    this.x = Math.floor((Math.random() * (largura-this.raio/2)) + this.raio/2);
+    this.y = Math.floor((Math.random() * (altura-this.raio/2)) + this.raio/2);
+    this.tempoDeVida = Math.floor((Math.random() * 1001) + 100);
+
+    //Metodos
+    this.vibrar = function(){
+        this.x += Math.floor((Math.random() * 5) - 2);
+        this.y += Math.floor((Math.random() * 5) - 2);
+        if(this.x < this.raio){this.x = this.raio/2;}
+        else if(this.x > largura-this.raio){this.x = largura-this.raio/2;}
+        if(this.y < this.raio){this.y = this.raio/2;}
+        else if(this.y > altura-this.raio){this.y = altura-this.raio/2;}
+    }
 }

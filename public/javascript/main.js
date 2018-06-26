@@ -13,7 +13,7 @@ var comidas = [];
 var baixoFPS = false;
 var estouVivo = false;
 var segurarMouse = true;
-//var emJogo = false;
+var buracos = [];
 
 pegarNick();
 
@@ -48,6 +48,7 @@ function setup(){
     //Recebidos
     socket.on("atualizarJogadores", atualizarJogadores);
     socket.on("atualizarComidas", atualizarComidas);
+    socket.on("atualizarBuracos", atualizarBuracos);
     socket.on("tamanhoMapa", function(dados){
         if(windowWidth < windowHeight){
             tela = createCanvas(windowWidth, windowWidth);
@@ -103,7 +104,6 @@ function draw(){
         }
         else{estouVivo = true;}
     }
-    if(!estouVivo && frameCount > 60 && jogador.emJogo){perdeu();}
     
     if(estouVivo){
         jogador.desenhar();
@@ -113,6 +113,20 @@ function draw(){
         jogador.raio -= jogador.raio*0.008;
         socket.emit("atualizarPosicao", jogador);
     }
+    
+    for(var i=0; i<buracos.length; i++){
+        hit = collideCircleCircle(jogador.x, jogador.y, jogador.raio, buracos[i].x, buracos[i].y, buracos[i].raio);
+        if(hit && estouVivo){
+            jogador.buraco();
+            if(jogador.raio <= 0){
+                estouVivo = false;
+                jogador.raio = 0;
+                socket.emit("engolir", jogador.id);
+            }
+        }
+        buracos[i].desenhar();
+    }
+    if(!estouVivo && frameCount > 60 && jogador.emJogo){perdeu();}
     ranking();
 }
 
@@ -171,6 +185,13 @@ function atualizarComidas(lista){
     }
     if(lista.length == 0){
         comidas = [];
+    }
+}
+
+function atualizarBuracos(lista){
+    buracos = [];
+    for(var i=0; i<lista.length; i++){
+        buracos.push(new Buraco(lista[i].x, lista[i].y, lista[i].raio));
     }
 }
 
@@ -278,10 +299,11 @@ function ranking(){
     textAlign(LEFT);
     noStroke();
     fill(50);
-    textSize(16);
+    textSize(17);
     if(podio.length > 0){text("1° - "+podio[0].nick+" ("+podio[0].raio.toFixed(1)+")", 5, 15);}
     textSize(14);
     if(podio.length > 1){text("2° - "+podio[1].nick+" ("+podio[1].raio.toFixed(1)+")", 5, 30);}
+    textSize(11);
     if(podio.length > 2){text("3° - "+podio[2].nick+" ("+podio[2].raio.toFixed(1)+")", 5, 45);}
     textAlign(CENTER);
 }

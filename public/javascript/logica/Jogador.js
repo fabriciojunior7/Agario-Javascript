@@ -115,8 +115,10 @@ function Jogador(){
         socket.emit("engolir", adverdasio.id);
     }
 
-    this.serEngolido = function(){
-
+    this.buraco = function(){
+        if(this.emJogo){
+            this.raio -= 5;
+        }
     }
 
     this.reset = function(){

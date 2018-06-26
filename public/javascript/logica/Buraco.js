@@ -1,10 +1,14 @@
-function Buraco(x, y, raio, score, id, nick, emJogo){
+function Buraco(x, y, raio){
     
     //ATRIBUTOS
-    cor = color(255, 0, 0);
+    cor = color(102, 51, 0);
     Entidade.call(this, x, y, raio, cor);
-    this.score = score;
-    this.id = id;
-    this.nick = nick;
-    this.emJogo = emJogo;
+
+    //METODOS
+    this.desenhar = function(){
+        strokeWeight(3);
+        stroke(0);
+        fill(this.cor);
+        ellipse(this.x, this.y, this.raio, this.raio);
+    }
 }
