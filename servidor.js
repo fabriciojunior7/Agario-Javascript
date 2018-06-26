@@ -202,8 +202,7 @@ function Bala(x, y, num, id){
     this.velocidade = 5;
     this.velocidadeX = Math.sin((Math.PI/4)*num)*this.velocidade;
     this.velocidadeY = Math.cos((Math.PI/4)*num)*this.velocidade;
-    //this.velocidadeX = 2;
-    //this.velocidadeY = 2;
+    this.raio = largura*0.02;
     
     //Metodos
     this.mover = function(){

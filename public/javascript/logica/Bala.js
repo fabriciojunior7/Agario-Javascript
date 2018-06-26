@@ -1,8 +1,8 @@
-function Bala(x, y, velocidadeX, velocidadeY, id){
+function Bala(x, y, velocidadeX, velocidadeY, raio, id){
     
     //ATRIBUTOS
     cor = color(0, 0, 0);
-    Entidade.call(this, x, y, 10, cor);
+    Entidade.call(this, x, y, raio, cor);
     this.corAtual = 1;
     this.velocidadeX = velocidadeX;
     this.velocidadeY = velocidadeY;
