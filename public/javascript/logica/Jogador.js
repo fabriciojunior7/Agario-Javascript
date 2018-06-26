@@ -118,6 +118,7 @@ function Jogador(){
     this.buraco = function(){
         if(this.emJogo){
             this.raio -= 5;
+            this.velocidade = 5 - (this.raio/50);
         }
     }
 

@@ -128,6 +128,7 @@ function draw(){
     }
     if(!estouVivo && frameCount > 60 && jogador.emJogo){perdeu();}
     ranking();
+    logo();
 }
 
 function windowResized(){
@@ -224,6 +225,10 @@ function grade(){
 
 function baixaTaxa(){
     baixoFPS = true;
+}
+
+function keyPressed(){
+    if(keyCode == 13){concluirNick();}
 }
 
 function pegarNick(){
@@ -339,3 +344,15 @@ function menu(){
         location.reload();
     }
 }
+
+function logo(){
+    noStroke();
+    fill(175, 0, 0);
+    textSize(12);
+    textAlign(LEFT);
+    text("Fabricio Junior", 2, altura-2);
+}
+
+window.onbeforeunload = function(event) {
+    return 'Dialog text here.';
+ };
