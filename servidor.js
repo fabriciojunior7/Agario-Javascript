@@ -66,6 +66,15 @@ setInterval(moverBalas, 25);
 function moverBalas(){
     for(var i=0; i<balas.length; i++){
         balas[i].mover();
+        /*hit = false;
+        for(var j=0; j<buracos.length; j++){
+            hit = collideCircleCircle(balas[i].x, balas[i].y, balas[i].raio, buracos[j].x, buracos[j].y, buracos[j].raio);
+            console.log(hit);
+            if(hit){
+                balas.splice(i, 1);
+                break;
+            }
+        }*/
         if(balas[i].x < 0 || balas[i].x > largura || balas[i].y < 0 || balas[i].y > altura){balas.splice(i, 1);}
     }
 }
@@ -246,5 +255,17 @@ function resetPartida(){
     
     for(var i=0; i<numBuracos; i++){
         buracos.push(new Buraco());
+    }
+}
+
+function collideCircleCircle(x1, y1, r1, x2, y2, r2){
+    distX = Math.abs(x1 - x2);
+    distY = Math.abs(y1 - y2);
+    raios = r1 + r2;
+    if(distX < raios || distY < raios){
+        return(true);
+    }
+    else{
+        return(false);
     }
 }

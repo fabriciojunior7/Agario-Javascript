@@ -81,9 +81,10 @@ function draw(){
         else{jogador.mover();}
     }
 
+    //Comidas
     for(var i=0; i<comidas.length; i++){
         hit = collideCircleCircle(jogador.x, jogador.y, jogador.raio, comidas[i].x, comidas[i].y, comidas[i].raio);
-        if(estouVivo && hit && jogador.raio > comidas[i].raio && !baixoFPS){
+        if(estouVivo && hit && jogador.raio > comidas[i].raio && !baixoFPS && jogador.emJogo){
             comidas[i].comer();
             comidas.splice(i, 1);
         }
@@ -236,8 +237,8 @@ function textos(){
     if(tirosRestantes > 0 || jogador.raio >= 30){text(".".repeat(tirosRestantes), jogador.x, jogador.y+20);}
     //Cronometro
     textAlign(RIGHT);
-    textSize(14);
-    text(relogio+" s", largura-2, 13);
+    textSize(16);
+    text(relogio+" s", largura-2, 14);
 }
 
 function grade(){
