@@ -254,7 +254,7 @@ function grade(){
 }
 
 function baixaTaxa(){
-    baixoFPS = true;
+    //baixoFPS = true;
 }
 
 function keyPressed(){

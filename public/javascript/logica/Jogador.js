@@ -2,10 +2,13 @@ function Jogador(){
     
     //ATRIBUTOS
     Entidade.call(this, round(random(5, largura-5)), round(random(5, altura-5)), 5, color(0, 0, 255));
-    this.velocidade = 5;
+    this.velocidadeMax = 6;
+    this.velocidadeMin = 0.5;
+    this.velocidade = this.velocidadeMax;
+    this.raioMax = largura*0.6;
     this.score = 0;
-    this.maxScore = 0;
-    this.wasd = [false, false, false, false];
+    //this.maxScore = 0;
+    //this.wasd = [false, false, false, false];
     this.alvo = [0, 0];
     this.id = "";
     this.nick = "";
@@ -13,7 +16,7 @@ function Jogador(){
     this.comidasComidas = [];
 
     //Metodos
-    this.mover = function(){
+    /*this.mover = function(){
         //EIXO Y
         if(this.wasd[0] && this.y > this.raio/2){
             this.y -= this.velocidade;
@@ -66,7 +69,7 @@ function Jogador(){
         else if(key == 39 || key == 68){
             this.wasd[3] = false;
         }
-    }
+    }*/
 
     this.seguirDedo = function(mx, my){
         distX = abs(this.x - mx);
@@ -74,6 +77,7 @@ function Jogador(){
         hipotenusa = dist(this.x, this.y, mx, my);
         seno = distX/hipotenusa;
         cosseno = distY/hipotenusa;
+
         //EIXO X
         if(this.alvo[0] < this.x && this.x > this.raio/2){this.x -= this.velocidade*seno;}
         else if(this.alvo[0] > this.x && this.x < largura-this.raio/2){this.x += this.velocidade*seno;}
@@ -97,18 +101,19 @@ function Jogador(){
         if(this.y < this.raio/2){this.y = this.raio/2;}
         if(this.y > altura-this.raio/2){this.y = altura-this.raio/2;}
         //RAIO
+        this.raioMax = floor(largura*0.6);
         if(this.raio < 5){this.raio += 0.5;}
+        if(this.raio > this.raioMax){this.raio = this.raioMax;}
+        //VELOCIDADE
+        this.ajustarVelocidade();
+
     }
 
     this.comer = function(comida){
         if(!this.jaComeu(comida)){
             this.score += comida.raio/4;
-            if(this.raio < largura*0.6){
-                this.raio += comida.raio/4;
-                this.velocidade = 5 - (this.raio/50);
-                if(this.velocidade < 0.25){this.velocidade = 0.25;}
-            }
-            else{this.raio = largura*0.6;}
+            this.raio += comida.raio/4;
+            this.correcoes();
             this.comidasComidas.push(comida.id);
             if(this.comidasComidas.length > 100){this.limparComidas();}
         }
@@ -117,7 +122,7 @@ function Jogador(){
     this.engolir = function(adverdasio){
         this.raio += adverdasio.raio;
         this.score += adverdasio.raio;
-        if(this.raio > largura*0.6){this.raio = largura*0.6;}
+        this.correcoes();
         jogadores.splice(adverdasio.id, 1);
         socket.emit("engolir", adverdasio.id);
     }
@@ -125,7 +130,7 @@ function Jogador(){
     this.buraco = function(){
         if(this.emJogo){
             this.raio -= 5;
-            this.velocidade = 5 - (this.raio/50);
+            this.correcoes();
         }
     }
 
@@ -140,14 +145,15 @@ function Jogador(){
 
     this.atirar = function(){
         if(this.raio >= 30){
-            this.raio -= 25;
-            this.velocidade = 5 - (this.raio/50);
+            this.raio -= 20;
+            this.correcoes();
             socket.emit("atirar", this);
         }
     }
 
     this.atingirBala = function(bala){
         this.raio -= 30;
+        this.correcoes();
     }
 
     this.checarVivo = function(){
@@ -171,6 +177,12 @@ function Jogador(){
             }
         }
         return jaComeu;
+    }
+
+    this.ajustarVelocidade = function(){
+        x = (this.velocidadeMax - this.velocidadeMin)/(this.raioMax - 50);
+        this.velocidade = this.velocidadeMax - (this.raio * x);
+        if(this.velocidade < this.velocidadeMin){this.velocidade = this.velocidadeMin;}
     }
 
 }
