@@ -104,11 +104,13 @@ function Jogador(){
             this.velocidade = 5 - (this.raio/50);
             if(this.velocidade < 0.25){this.velocidade = 0.25;}
         }
+        else{this.raio = largura*0.6;}
     }
 
     this.engolir = function(adverdasio){
         this.raio += adverdasio.raio;
         this.score += adverdasio.raio;
+        if(this.raio > largura*0.6){this.raio = largura*0.6;}
         jogadores.splice(adverdasio.id, 1);
         socket.emit("engolir", adverdasio.id);
     }

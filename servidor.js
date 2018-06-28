@@ -24,6 +24,7 @@ var tempoInicial = 300;
 var tempo = tempoInicial;
 var contagemRegressiva = 10;
 var partidarTotais = 0;
+var conexoesTotais = 0;
 
 for(var i=0; i<numComidas; i++){
     comidas.push(new Comida());
@@ -48,6 +49,7 @@ function cronometro(){
         tempo--;
     }
     else{
+        if(contagemRegressiva == 10){console.log("\n")}
         console.log("Contagem Regressiva: "+contagemRegressiva+" s");
         contagemRegressiva--;
         if(contagemRegressiva < 0){
@@ -55,7 +57,7 @@ function cronometro(){
             contagemRegressiva = 10;
             jogadores = [];
             partidarTotais++;
-            console.log("\nTotal de Partidas: "+partidarTotais+"\n");
+            console.log("\nTotal de Partidas: "+partidarTotais);
         }
     }
     dados = {tempo:tempo, contagemRegressiva:contagemRegressiva};
@@ -100,14 +102,14 @@ function atualizarBuracos(){
 io.sockets.on("connection", novaConexao);
 function novaConexao(socket){
     
-    console.log("Nova Conexao...");
+    conexoesTotais++;
+    console.log("Nova Conexao... (ID: "+socket.id+") - (Total: "+conexoesTotais+" - "+jogadores.length+")");
     socket.emit("tamanhoMapa", dados={l:largura, a:altura});
 
     //RECEBIDOS
     socket.on("novoJogador", novoJogador);
     function novoJogador(jogador){
         jogadores.push(new Jogador(jogador.x, jogador.y, jogador.raio, jogador.score, socket.id, jogador.nick, jogador.emJogo));
-        console.log("Jogadores Online: " + jogadores.length + "\n");
     }
 
     socket.on("comeu", comeu);
@@ -162,14 +164,19 @@ function novaConexao(socket){
         }
     }
 
+    socket.on("novoNick", novoNick);
+    function novoNick(nick){
+        console.log("--- Novo Jogador: ("+nick+") - (Total: "+conexoesTotais+" - "+jogadores.length+")");
+    }
+
     //DESCONEXAO
     socket.on("disconnect", desconectar);
     function desconectar(){
         for(var i=0; i<jogadores.length; i++){
             if(jogadores[i].id == socket.id){
+                //conexoesTotais--;
+                console.log("--- Desconexao: ("+jogadores[i].nick+") - (Total: "+conexoesTotais+" - "+(jogadores.length-1)+")");
                 jogadores.splice(i, 1);
-                console.log("\nJogador Desconectou...");
-                console.log("Jogadores Online: " + jogadores.length + "\n");
                 break;
             }
         }

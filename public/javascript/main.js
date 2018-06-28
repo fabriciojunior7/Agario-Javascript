@@ -22,11 +22,8 @@ pegarNick();
 
 function setup(){
     //socket = io.connect("localhost:3000");
-    socket = io.connect("192.168.0.8:3000");
-    //socket = io.connect("http://fabriciojunior7.surge.sh:3000");
-    //socket = io.connect("187.183.196.88:80");
     //socket = io.connect("192.168.0.8:3000");
-    //socket = io.connect("45.55.110.124:3000");
+    socket = io.connect("http://fabriciojunior777.ddns.net:3000");
 
     socket.on("tamanhoMapa", function(dados){
         if(windowWidth < windowHeight){
@@ -95,7 +92,7 @@ function draw(){
     for(var i=0; i < balas.length; i++){
         balas[i].desenhar();
         hit = collideCircleCircle(jogador.x, jogador.y, jogador.raio, balas[i].x, balas[i].y, balas[i].raio);
-        if(hit && balas[i].id != jogador.id){
+        if(hit && jogador.emJogo && balas[i].id != jogador.id){
             jogador.atingirBala(balas[i]);
             socket.emit("balaColidida", balas[i].id);
             balas.splice(i, 1);
@@ -116,7 +113,7 @@ function draw(){
 
             //Engolir
             hit = collidePointCircle(jogadores[i].x, jogadores[i].y ,jogador.x, jogador.y, jogador.raio);
-            if(hit && jogadores[i].raio <= jogador.raio*0.8 && jogador.raio > jogadores[i].raio){
+            if(hit && jogador.emJogo && jogadores[i].raio <= jogador.raio*0.8 && jogador.raio > jogadores[i].raio){
                 jogador.engolir(jogadores[i]);
             }
         }
@@ -140,6 +137,7 @@ function draw(){
         }
         buracos[i].desenhar();
     }
+    
     if(!estouVivo && frameCount > 60 && jogador.emJogo){perdeu();}
     ranking();
     logo();
@@ -279,6 +277,8 @@ function concluirNick(){
     document.body.style.overflow = "hidden";
     jogador.nick = document.getElementById("nick").value;
     jogador.iniciar();
+    novoNick = jogador.nick;
+    socket.emit("novoNick", novoNick);
 }
 
 function ranking(){
