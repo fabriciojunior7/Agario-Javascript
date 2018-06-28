@@ -20,6 +20,7 @@ var buracos = [];
 var balas = [];
 var numComidas = Math.floor(largura*altura/2000);
 var comidasTotais = 0;
+var balasTotais = 0;
 var numBuracos = Math.floor(largura*0.006);
 var tempoInicial = 600;
 var tempo = tempoInicial;
@@ -251,6 +252,7 @@ function Bala(x, y, num, id){
     this.y = y;
     this.num = num;
     this.id = id;
+    this.codigo = "B"+codigoBala();
     this.velocidade = 5;
     this.velocidadeX = Math.sin((Math.PI/4)*num)*this.velocidade;
     this.velocidadeY = Math.cos((Math.PI/4)*num)*this.velocidade;
@@ -292,4 +294,9 @@ function collideCircleCircle(x1, y1, r1, x2, y2, r2){
 function codigoComida(){
     comidasTotais++;
     return comidasTotais;
+}
+
+function codigoBala(){
+    balasTotais++;
+    return balasTotais;
 }

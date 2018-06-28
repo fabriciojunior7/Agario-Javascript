@@ -1,4 +1,4 @@
-function Bala(x, y, velocidadeX, velocidadeY, raio, id){
+function Bala(x, y, velocidadeX, velocidadeY, raio, id, codigo){
     
     //ATRIBUTOS
     cor = color(0, 0, 0);
@@ -7,6 +7,7 @@ function Bala(x, y, velocidadeX, velocidadeY, raio, id){
     this.velocidadeX = velocidadeX;
     this.velocidadeY = velocidadeY;
     this.id = id;
+    this.codigo = codigo;
 
     //METODOS
     this.desenhar = function(){

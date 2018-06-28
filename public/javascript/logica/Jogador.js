@@ -13,7 +13,7 @@ function Jogador(){
     this.id = "";
     this.nick = "";
     this.emJogo = false;
-    this.comidasComidas = [];
+    this.estomago = [];
 
     //Metodos
     /*this.mover = function(){
@@ -114,17 +114,18 @@ function Jogador(){
             this.score += comida.raio/4;
             this.raio += comida.raio/4;
             this.correcoes();
-            this.comidasComidas.push(comida.id);
-            if(this.comidasComidas.length > 100){this.limparComidas();}
+            if(this.estomago.length > 100){this.limparComidas();}
         }
     }
 
     this.engolir = function(adverdasio){
-        this.raio += adverdasio.raio;
-        this.score += adverdasio.raio;
-        this.correcoes();
-        jogadores.splice(adverdasio.id, 1);
-        socket.emit("engolir", adverdasio.id);
+        if(!this.jaComeu(adverdasio)){
+            this.raio += adverdasio.raio;
+            this.score += adverdasio.raio;
+            this.correcoes();
+            jogadores.splice(adverdasio.id, 1);
+            socket.emit("engolir", adverdasio.id);
+        }
     }
 
     this.buraco = function(){
@@ -152,8 +153,11 @@ function Jogador(){
     }
 
     this.atingirBala = function(bala){
-        this.raio -= 30;
-        this.correcoes();
+        if(!this.jaInteragiu(bala.codigo)){
+            this.raio -= 30;
+            this.jaInteragiu(bala.codigo);
+            this.correcoes();
+        }
     }
 
     this.checarVivo = function(){
@@ -165,18 +169,31 @@ function Jogador(){
     }
 
     this.limparComidas = function(){
-        this.comidasComidas.splice(0, 10);
+        this.estomago.splice(0, 10);
     }
 
-    this.jaComeu = function(comida){
+    this.jaComeu = function(entidade){
         jaComeu = false;
-        for(var i=0; i<this.comidasComidas.length; i++){
-            if(comida.id == this.comidasComidas[i]){
+        for(var i=0; i<this.estomago.length; i++){
+            if(entidade.id == this.estomago[i]){
                 jaComeu = true;
                 break;
             }
         }
+        if(!jaComeu){this.estomago.push(entidade.id);}
         return jaComeu;
+    }
+
+    this.jaInteragiu = function(codigo){
+        jaInteragiu = false;
+        for(var i=0; i<this.estomago.length; i++){
+            if(codigo == this.estomago[i]){
+                jaInteragiu = true;
+                break;
+            }
+        }
+        if(!jaInteragiu){this.estomago.push(codigo);}
+        return jaInteragiu;
     }
 
     this.ajustarVelocidade = function(){

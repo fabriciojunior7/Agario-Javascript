@@ -211,7 +211,7 @@ function atualizarBuracos(lista){
 function atualizarBalas(lista){
     balas = [];
     for(var i=0; i<lista.length; i++){
-        balas.push(new Bala(lista[i].x, lista[i].y, lista[i].velocidadeX, lista[i].velocidadeY, largura*0.02, lista[i].id));
+        balas.push(new Bala(lista[i].x, lista[i].y, lista[i].velocidadeX, lista[i].velocidadeY, largura*0.02, lista[i].id, lista[i].codigo));
     }
 }
 
