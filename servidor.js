@@ -46,23 +46,26 @@ function atualizarServidor(){
 
 setInterval(cronometro, 1000);
 function cronometro(){
-    if(tempo > 0){
-        tempo--;
-    }
-    else{
-        //if(contagemRegressiva == 10){console.log("\n")}
-        //console.log("Contagem Regressiva: "+contagemRegressiva+" s");
-        contagemRegressiva--;
-        if(contagemRegressiva < 0){
-            tempo = tempoInicial;
-            contagemRegressiva = contagemRegressivaInicial;
-            jogadores = [];
-            partidarTotais++;
-            console.log("\nTotal de Partidas: "+partidarTotais+"\n");
+    if(jogadores.length > 0){
+        if(tempo > 0){
+            tempo--;
         }
+        else{
+            //if(contagemRegressiva == 10){console.log("\n")}
+            //console.log("Contagem Regressiva: "+contagemRegressiva+" s");
+            contagemRegressiva--;
+            if(contagemRegressiva < 0){
+                tempo = tempoInicial;
+                contagemRegressiva = contagemRegressivaInicial;
+                jogadores = [];
+                partidarTotais++;
+                console.log("\nTotal de Partidas: "+partidarTotais+"\n");
+            }
+        }
+        dados = {tempo:tempo, contagemRegressiva:contagemRegressiva};
+        io.sockets.emit("cronometro", dados);
     }
-    dados = {tempo:tempo, contagemRegressiva:contagemRegressiva};
-    io.sockets.emit("cronometro", dados);
+    else if(tempo <= 5){tempo = tempoInicial;}
 }
 
 setInterval(moverBalas, 25);
@@ -104,7 +107,9 @@ io.sockets.on("connection", novaConexao);
 function novaConexao(socket){
     
     conexoesTotais++;
-    console.log("Nova Conexao... (ID: "+socket.id+") - (Total: "+conexoesTotais+" - "+jogadores.length+")");
+    data = new Date();
+    dataDeAcesso = data.getHours()+":"+data.getMinutes()+":"+data.getSeconds()+" - "+data.getDate()+"/"+(data.getMonth()+1)+"/"+data.getFullYear();
+    console.log("Nova Conexao... (Total: "+conexoesTotais+" - "+jogadores.length+") - ("+dataDeAcesso+")");
     socket.emit("tamanhoMapa", dados={l:largura, a:altura});
 
     //RECEBIDOS
@@ -167,7 +172,9 @@ function novaConexao(socket){
 
     socket.on("novoNick", novoNick);
     function novoNick(nick){
-        console.log("--- Novo Jogador: ("+nick+") - (Total: "+conexoesTotais+" - "+jogadores.length+")");
+        data = new Date();
+        dataDeAcesso = data.getHours()+":"+data.getMinutes()+":"+data.getSeconds()+" - "+data.getDate()+"/"+(data.getMonth()+1)+"/"+data.getFullYear();
+        console.log("--- Novo Jogador: ("+nick+") - (Total: "+conexoesTotais+" - "+jogadores.length+") - ("+dataDeAcesso+")");
     }
 
     //DESCONEXAO
@@ -176,7 +183,9 @@ function novaConexao(socket){
         for(var i=0; i<jogadores.length; i++){
             if(jogadores[i].id == socket.id){
                 //conexoesTotais--;
-                console.log("--- Desconexao: ("+jogadores[i].nick+") - (Total: "+conexoesTotais+" - "+(jogadores.length-1)+")");
+                data = new Date();
+                dataDeAcesso = data.getHours()+":"+data.getMinutes()+":"+data.getSeconds()+" - "+data.getDate()+"/"+(data.getMonth()+1)+"/"+data.getFullYear();
+                console.log("--- Desconexao: ("+jogadores[i].nick+") - (Total: "+conexoesTotais+" - "+(jogadores.length-1)+") - ("+dataDeAcesso+")");
                 jogadores.splice(i, 1);
                 break;
             }

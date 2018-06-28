@@ -85,16 +85,18 @@ function Jogador(){
             this.x = mx;
             this.y = my;
         }
-        this.corrigirPosicao();
+        this.correcoes();
     }
 
-    this.corrigirPosicao = function(){
+    this.correcoes = function(){
         //EIXO X
         if(this.x < this.raio/2){this.x = this.raio/2;}
         if(this.x > largura-this.raio/2){this.x = largura-this.raio/2;}
-
+        //EIXO Y
         if(this.y < this.raio/2){this.y = this.raio/2;}
         if(this.y > altura-this.raio/2){this.y = altura-this.raio/2;}
+        //RAIO
+        if(this.raio < 5){this.raio += 0.5;}
     }
 
     this.comer = function(comida){
