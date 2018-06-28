@@ -19,6 +19,7 @@ var comidas = [];
 var buracos = [];
 var balas = [];
 var numComidas = Math.floor(largura*altura/2000);
+var comidasTotais = 0;
 var numBuracos = Math.floor(largura*0.006);
 var tempoInicial = 600;
 var tempo = tempoInicial;
@@ -211,7 +212,8 @@ function Comida(){
     this.raio = Math.floor((Math.random() * 5) + 2);
     this.x = Math.floor((Math.random() * (largura-this.raio/2)) + this.raio/2);
     this.y = Math.floor((Math.random() * (altura-this.raio/2)) + this.raio/2);
-    this.id = "C" + this.x + "" + this.y + "" + this.raio;
+    //this.id = "C" + this.x + "" + this.y + "" + this.raio + codigoComida();
+    this.id = "C"+codigoComida();
 }
 
 function Buraco(){
@@ -285,4 +287,9 @@ function collideCircleCircle(x1, y1, r1, x2, y2, r2){
     else{
         return(false);
     }
+}
+
+function codigoComida(){
+    comidasTotais++;
+    return comidasTotais;
 }

@@ -10,6 +10,7 @@ function Jogador(){
     this.id = "";
     this.nick = "";
     this.emJogo = false;
+    this.comidasComidas = [];
 
     //Metodos
     this.mover = function(){
@@ -100,13 +101,17 @@ function Jogador(){
     }
 
     this.comer = function(comida){
-        this.score += comida.raio/4;
-        if(this.raio < largura*0.6){
-            this.raio += comida.raio/4;
-            this.velocidade = 5 - (this.raio/50);
-            if(this.velocidade < 0.25){this.velocidade = 0.25;}
+        if(!this.jaComeu(comida)){
+            this.score += comida.raio/4;
+            if(this.raio < largura*0.6){
+                this.raio += comida.raio/4;
+                this.velocidade = 5 - (this.raio/50);
+                if(this.velocidade < 0.25){this.velocidade = 0.25;}
+            }
+            else{this.raio = largura*0.6;}
+            this.comidasComidas.push(comida.id);
+            if(this.comidasComidas.length > 100){this.limparComidas();}
         }
-        else{this.raio = largura*0.6;}
     }
 
     this.engolir = function(adverdasio){
@@ -151,6 +156,21 @@ function Jogador(){
             jogador.raio = 0;
             socket.emit("engolir", jogador.id);
         }
+    }
+
+    this.limparComidas = function(){
+        this.comidasComidas.splice(0, 10);
+    }
+
+    this.jaComeu = function(comida){
+        jaComeu = false;
+        for(var i=0; i<this.comidasComidas.length; i++){
+            if(comida.id == this.comidasComidas[i]){
+                jaComeu = true;
+                break;
+            }
+        }
+        return jaComeu;
     }
 
 }
