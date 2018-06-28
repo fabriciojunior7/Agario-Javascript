@@ -20,9 +20,10 @@ var buracos = [];
 var balas = [];
 var numComidas = Math.floor(largura*altura/2000);
 var numBuracos = Math.floor(largura*0.006);
-var tempoInicial = 300;
+var tempoInicial = 600;
 var tempo = tempoInicial;
-var contagemRegressiva = 10;
+var contagemRegressivaInicial = 5;
+var contagemRegressiva = contagemRegressivaInicial;
 var partidarTotais = 0;
 var conexoesTotais = 0;
 
@@ -49,15 +50,15 @@ function cronometro(){
         tempo--;
     }
     else{
-        if(contagemRegressiva == 10){console.log("\n")}
-        console.log("Contagem Regressiva: "+contagemRegressiva+" s");
+        //if(contagemRegressiva == 10){console.log("\n")}
+        //console.log("Contagem Regressiva: "+contagemRegressiva+" s");
         contagemRegressiva--;
         if(contagemRegressiva < 0){
             tempo = tempoInicial;
-            contagemRegressiva = 10;
+            contagemRegressiva = contagemRegressivaInicial;
             jogadores = [];
             partidarTotais++;
-            console.log("\nTotal de Partidas: "+partidarTotais);
+            console.log("\nTotal de Partidas: "+partidarTotais+"\n");
         }
     }
     dados = {tempo:tempo, contagemRegressiva:contagemRegressiva};
