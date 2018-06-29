@@ -73,6 +73,7 @@ function draw(){
     if(jogador.id == "" || jogador.id == undefined){jogador.id = socket.id;}
     background(255);
     grade();
+
     if(estouVivo){
         if(mouseIsPressed || segurarMouse){seguirDedo();}
         else{jogador.mover();}
@@ -89,7 +90,7 @@ function draw(){
     }
 
     //BALAS
-    for(var i=0; i < balas.length; i++){
+    for(var i=0; i<balas.length; i++){
         balas[i].desenhar();
         hit = collideCircleCircle(jogador.x, jogador.y, jogador.raio, balas[i].x, balas[i].y, balas[i].raio);
         if(hit && jogador.emJogo && balas[i].id != jogador.id){
@@ -143,18 +144,6 @@ function draw(){
     logo();
 }
 
-function windowResized(){
-    if(windowWidth < windowHeight){
-        tela = createCanvas(windowWidth, windowWidth);
-        escala = windowWidth/largura;
-    }
-    else{
-        tela = createCanvas(windowHeight, windowHeight);
-        escala = windowHeight/altura;
-    }
-    window.scrollTo(0, document.body.scrollHeight);
-}
-
 function seguirDedo(){
     if(!baixoFPS && jogador.emJogo){
         jogador.alvo = [mouseX/escala, mouseY/escala];
@@ -180,6 +169,23 @@ function seguirDedo(){
     }
 }
 
+function windowResized(){
+    if(windowWidth < windowHeight){
+        tela = createCanvas(windowWidth, windowWidth);
+        escala = windowWidth/largura;
+    }
+    else{
+        tela = createCanvas(windowHeight, windowHeight);
+        escala = windowHeight/altura;
+    }
+    window.scrollTo(0, document.body.scrollHeight);
+}
+
+function mousePressed(){
+    if(touches.length > 1){jogador.atirar();}
+}
+
+// ======================================== ATUALIZADORES ========================================
 function atualizarJogadores(lista){
     jogadores = [];
     for(var i=0; i<lista.length; i++){
@@ -190,15 +196,15 @@ function atualizarJogadores(lista){
     if(lista.length == 0){
         jogadores = [];
     }
+    //print("JOGADORES");
 }
 
 function atualizarComidas(lista){
+    comidas = [];
     for(var i=0; i<lista.length; i++){
-        comidas[i] = new Comida(lista[i].x, lista[i].y, lista[i].raio, lista[i].id);
+        comidas.push(new Comida(lista[i].x, lista[i].y, lista[i].raio, lista[i].id));
     }
-    if(lista.length == 0){
-        comidas = [];
-    }
+    //print("COMIDAS");
 }
 
 function atualizarBuracos(lista){
@@ -206,6 +212,7 @@ function atualizarBuracos(lista){
     for(var i=0; i<lista.length; i++){
         buracos.push(new Buraco(lista[i].x, lista[i].y, lista[i].raio));
     }
+    //print("BURACOS");
 }
 
 function atualizarBalas(lista){
@@ -213,7 +220,10 @@ function atualizarBalas(lista){
     for(var i=0; i<lista.length; i++){
         balas.push(new Bala(lista[i].x, lista[i].y, lista[i].velocidadeX, lista[i].velocidadeY, largura*0.02, lista[i].id, lista[i].codigo));
     }
+    //print("BALAS");
 }
+
+// ===============================================================================================
 
 function textos(){
     //Raio
@@ -259,6 +269,7 @@ function baixaTaxa(){
 
 function keyPressed(){
     if(keyCode == 13){concluirNick();}
+    if(keyCode == 32){jogador.atirar();}
 }
 
 function doubleClicked(){

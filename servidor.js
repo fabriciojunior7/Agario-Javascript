@@ -18,9 +18,10 @@ var jogadores = [];
 var comidas = [];
 var buracos = [];
 var balas = [];
-var numComidas = Math.floor(largura*altura/2000);
+var numComidas = Math.floor(largura*altura/1500);
 var comidasTotais = 0;
 var balasTotais = 0;
+var ultimaBala = false;
 var numBuracos = Math.floor(largura*0.006);
 var tempoInicial = 600;
 var tempo = tempoInicial;
@@ -38,14 +39,22 @@ for(var i=0; i<numBuracos; i++){
 }
 
 //ATUALIZAR SERVIDOR
-setInterval(atualizarServidor, 25);
+setInterval(atualizarServidor, 40);
 function atualizarServidor(){
+    //Jogadores
     io.sockets.emit("atualizarJogadores", jogadores);
-    io.sockets.emit("atualizarComidas", comidas);
-    io.sockets.emit("atualizarBuracos", buracos);
-    io.sockets.emit("atualizarBalas", balas);
+    //Balas
+    if(balas.length > 0){
+        ultimaBala = true
+        io.sockets.emit("atualizarBalas", balas);
+    }
+    else if(ultimaBala){
+        ultimaBala = false;
+        io.sockets.emit("atualizarBalas", balas);
+    }
 }
 
+//CRONOMETRO
 setInterval(cronometro, 1000);
 function cronometro(){
     if(jogadores.length > 0){
@@ -70,30 +79,25 @@ function cronometro(){
     else if(tempo <= 5){tempo = tempoInicial;}
 }
 
-setInterval(moverBalas, 25);
+//BALAS
+setInterval(moverBalas, 33);
 function moverBalas(){
     for(var i=0; i<balas.length; i++){
         balas[i].mover();
-        /*hit = false;
-        for(var j=0; j<buracos.length; j++){
-            hit = collideCircleCircle(balas[i].x, balas[i].y, balas[i].raio, buracos[j].x, buracos[j].y, buracos[j].raio);
-            console.log(hit);
-            if(hit){
-                balas.splice(i, 1);
-                break;
-            }
-        }*/
         if(balas[i].x < 0 || balas[i].x > largura || balas[i].y < 0 || balas[i].y > altura){balas.splice(i, 1);}
     }
 }
 
-setInterval(novasComidas, 250);
+//VERIFICADOR DE COMIDAS
+setInterval(novasComidas, 500);
 function novasComidas(){
     if(comidas.length < numComidas){
         comidas.push(new Comida());
+        io.sockets.emit("atualizarComidas", comidas);
     }
 }
 
+//BURACOS
 setInterval(atualizarBuracos, 250);
 function atualizarBuracos(){
     if(buracos.length < numBuracos){
@@ -102,6 +106,7 @@ function atualizarBuracos(){
     for(var i=0; i<buracos.length; i++){
         buracos[i].mover();
     }
+    io.sockets.emit("atualizarBuracos", buracos);
 }
 
 //CONEXOES
@@ -113,6 +118,7 @@ function novaConexao(socket){
     dataDeAcesso = data.getHours()+":"+data.getMinutes()+":"+data.getSeconds()+" - "+data.getDate()+"/"+(data.getMonth()+1)+"/"+data.getFullYear();
     console.log("Nova Conexao... (Total: "+conexoesTotais+" - "+jogadores.length+") - ("+dataDeAcesso+")");
     socket.emit("tamanhoMapa", dados={l:largura, a:altura});
+    socket.emit("atualizarComidas", comidas);
 
     //RECEBIDOS
     socket.on("novoJogador", novoJogador);
@@ -128,6 +134,7 @@ function novaConexao(socket){
                 break;
             }
         }
+        //socket.emit("atualizarComidas", comidas);
     }
 
     socket.on("engolir", engolir);
@@ -253,7 +260,7 @@ function Bala(x, y, num, id){
     this.num = num;
     this.id = id;
     this.codigo = "B"+codigoBala();
-    this.velocidade = 5;
+    this.velocidade = 8;
     this.velocidadeX = Math.sin((Math.PI/4)*num)*this.velocidade;
     this.velocidadeY = Math.cos((Math.PI/4)*num)*this.velocidade;
     this.raio = largura*0.02;
