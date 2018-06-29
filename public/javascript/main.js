@@ -3,6 +3,7 @@ var socket;
 var tela;
 var largura = 200;
 var altura = 200;
+var cookieUsado = false;
 
 var escala;
 
@@ -17,8 +18,6 @@ var estouVivo = false;
 var segurarMouse = true;
 
 var relogio = 0;
-
-//pegarNick();
 
 function setup(){
     //socket = io.connect("localhost:3000");
@@ -66,8 +65,12 @@ function setup(){
 }
 
 function draw(){
-    if(frameRate() < 22 && frameCount > 30){baixaTaxa();}
-    else{baixoFPS = false;}
+    //if(frameRate() < 22 && frameCount > 30){baixaTaxa();}
+    //else{baixoFPS = false;}
+    if(!cookieUsado){
+        usandoCookies();
+        cookieUsado = true;
+    }
     scale(escala, escala);
     textAlign(CENTER);
     if(jogador.id == "" || jogador.id == undefined){jogador.id = socket.id;}
@@ -178,7 +181,10 @@ function windowResized(){
         tela = createCanvas(windowHeight, windowHeight);
         escala = windowHeight/altura;
     }
-    window.scrollTo(0, document.body.scrollHeight);
+    if(jogador.emJogo){
+        window.scrollTo(0, document.body.scrollHeight);
+        tela.position(windowWidth/2-tela.width/2, windowHeight/2-tela.height/2);
+    }
 }
 
 function mousePressed(){
@@ -276,14 +282,12 @@ function doubleClicked(){
     jogador.atirar();
 }
 
-function pegarNick(){
-    /*document.write("<div id='menu'>");
-    document.write("<center style='background-color: white; color: rgb(0, 0, 0); padding: 10px; font-size: 18px;'>");
-    document.write("1 - Engula Todos!<br>2 - Modos de Atirar: (2 Cliques) - (Tecla SPACE) - (2 Dedos na Tela).<br>");
-    document.write("3 - Modos de Andar: (Mouse) - (Tocando na tela) - (Arrastando Dedo).<br>");
-    document.write("4 - Cada partida dura 10 minutos e recomeça em 5 segundos.</center>");
-    document.write("<input id='nick' type='text' style='text-align:center; font-size: 20px; border-radius: 20px; margin: 10px; border: 3px solid red;' maxlength='16' placeholder='Nome' autofocus>");
-    document.write("<br><button id='botao' style='font-size: 20px; border-radius: 20px; background-color: white;' onclick=concluirNick()>Jogar!</button><br><br></div>");*/
+function usandoCookies(){
+    c = document.cookie;
+    c = c.split("=");
+    if(c[1] != undefined){
+        document.getElementById("nick").value = c[1];
+    }
 }
 
 function concluirNick(){
@@ -291,8 +295,10 @@ function concluirNick(){
     document.getElementById("botao").style.visibility = "hidden";
     document.getElementById("menu").style.visibility = "hidden";
     window.scrollTo(0, document.body.scrollHeight);
+    tela.position(windowWidth/2-tela.width/2, windowHeight/2-tela.height/2);
     document.body.style.overflow = "hidden";
     jogador.nick = document.getElementById("nick").value;
+    document.cookie = "nick="+jogador.nick+"; expires=Fri, 31 Dec 9999 23:59:59 GMT";
     jogador.iniciar();
     novoNick = jogador.nick;
     socket.emit("novoNick", novoNick);
