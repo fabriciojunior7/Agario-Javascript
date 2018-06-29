@@ -89,7 +89,7 @@ function moverBalas(){
 }
 
 //VERIFICADOR DE COMIDAS
-setInterval(novasComidas, 500);
+setInterval(novasComidas, 250);
 function novasComidas(){
     if(comidas.length < numComidas){
         comidas.push(new Comida());

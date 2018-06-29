@@ -18,7 +18,7 @@ var segurarMouse = true;
 
 var relogio = 0;
 
-pegarNick();
+//pegarNick();
 
 function setup(){
     //socket = io.connect("localhost:3000");
@@ -277,13 +277,19 @@ function doubleClicked(){
 }
 
 function pegarNick(){
-    document.write("<input id='nick' type='text' style='text-align:center; font-size: 20px; border-radius: 20px; margin: 10px; border: 3px solid red;' maxlength='16' placeholder='Nome' autofocus>"+
-    "<br><button id='botao' style='font-size: 20px; border-radius: 20px; background-color: white;' onclick=concluirNick()>Jogar!</button><br><br>");
+    /*document.write("<div id='menu'>");
+    document.write("<center style='background-color: white; color: rgb(0, 0, 0); padding: 10px; font-size: 18px;'>");
+    document.write("1 - Engula Todos!<br>2 - Modos de Atirar: (2 Cliques) - (Tecla SPACE) - (2 Dedos na Tela).<br>");
+    document.write("3 - Modos de Andar: (Mouse) - (Tocando na tela) - (Arrastando Dedo).<br>");
+    document.write("4 - Cada partida dura 10 minutos e recomeça em 5 segundos.</center>");
+    document.write("<input id='nick' type='text' style='text-align:center; font-size: 20px; border-radius: 20px; margin: 10px; border: 3px solid red;' maxlength='16' placeholder='Nome' autofocus>");
+    document.write("<br><button id='botao' style='font-size: 20px; border-radius: 20px; background-color: white;' onclick=concluirNick()>Jogar!</button><br><br></div>");*/
 }
 
 function concluirNick(){
     document.getElementById("nick").style.visibility = "hidden";
     document.getElementById("botao").style.visibility = "hidden";
+    document.getElementById("menu").style.visibility = "hidden";
     window.scrollTo(0, document.body.scrollHeight);
     document.body.style.overflow = "hidden";
     jogador.nick = document.getElementById("nick").value;
